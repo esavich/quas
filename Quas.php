@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/src/parser.php';
+
 /**
  * Class Quas
  * PHP Text Template Engine
@@ -20,8 +22,10 @@
  */
 class Quas
 {
-    public function __construct() {
+    private $parser;
 
+    public function __construct() {
+        $this->parser = new Quas\Parser();
     }
 
     /**
@@ -32,7 +36,7 @@ class Quas
      * @return string|bool
      */
     public function compile($template, $vars) {
-
+        $this->parser->parse($template);
     }
 
     /**
