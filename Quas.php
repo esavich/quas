@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/src/parser.php';
-
 /**
  * Class Quas
  * PHP Text Template Engine
@@ -25,7 +23,20 @@ class Quas
     private $parser;
 
     public function __construct() {
+        spl_autoload_register([__CLASS__, 'autoload']);
         $this->parser = new Quas\Parser();
+    }
+
+    public static function autoload($className) {
+        $pieces = explode('\\', $className.'.php');
+
+        array_splice($pieces, 0, 1, ['src']);
+
+        $path = join(DIRECTORY_SEPARATOR, $pieces);
+
+        if (file_exists($path)) {
+            include $path;
+        }
     }
 
     /**
@@ -36,6 +47,8 @@ class Quas
      * @return string|bool
      */
     public function compile($template, $vars) {
+        \Quas\Expr\Variable::$VAR_LIST = $vars;
+
         $this->parser->parse($template);
     }
 
