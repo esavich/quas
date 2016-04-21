@@ -21,10 +21,13 @@
 class Quas
 {
     private $parser;
+    private $engine;
 
     public function __construct() {
         spl_autoload_register([__CLASS__, 'autoload']);
+
         $this->parser = new Quas\Parser();
+        $this->engine = new Quas\Engine();
     }
 
     public static function autoload($className) {
@@ -47,9 +50,11 @@ class Quas
      * @return string|bool
      */
     public function compile($template, $vars) {
-        \Quas\Expr\Variable::$VAR_LIST = $vars;
-
         $this->parser->parse($template);
+
+        $result = $this->engine->process($this->parser->getRoot(), $vars);
+
+        return $result;
     }
 
     /**

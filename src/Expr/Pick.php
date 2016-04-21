@@ -11,57 +11,73 @@ namespace Quas\Expr;
 
 class Pick extends Expression
 {
-    protected $choices = [];
-    protected $meta = [];
-    protected $delimeter = null;
+    private $opts = [];
+    private $meta = [];
+    private $delimiter = null;
 
-    public function setData($data) {
-        foreach ($data as $opt) {
-            if ($opt['type'] == 'text') {
-                if (strpos($opt['data'], '|') !== false) {
-                    if (!$this->delimeter) {
-                        $this->delimeter = '|';
+    public function __construct($data) {
+        foreach ($data as $d) {
+            if (is_string($d)) {
+                // regex for matching (N@C)
+                if (preg_match('/[^\\\]?\((\d+)@(.*)[^\\\]?\)/', $d, $matches) > 0) {
+                    $d = preg_replace('/\((\d+)@(.*)\)/', '', $d);
 
-                        $this->meta = [
-                            'N' => 1,
-                            'C' => ','
-                        ];
-                    }
-                    elseif ($this->delimeter != '|') {
-                        // error in syntax (conflicted delimiters)
-                    }
-
-                    $this->choices = array_merge($this->choices, explode('|', $opt['data']));
+                    $this->meta = [
+                        'N' => $matches[1],
+                        'C' => $matches[2]
+                    ];
                 }
-                elseif (strpos($opt['data'], '~') !== false) {
-                    if (!$this->delimeter) {
-                        $this->delimeter = '~';
 
-                        $this->meta = [
-                            'N' => 'all',
-                            'C' => ','
-                        ];
-                    }
-                    elseif ($this->delimeter != '~') {
-                        // error in syntax (conflicted delimiters)
-                    }
-
-                    $this->choices = array_merge($this->choices, explode('~', $opt['data']));
-                }
-                elseif ($opt['data'] != '|' && $opt['data'] != '~' && !empty(trim($opt['data']))) {
-                    $this->choices[] = $opt['data'];
-                }
+                $this->opts = array_merge($this->opts, array_filter($this->split_opts($d), function($x) {
+                    return !empty(trim($x));
+                }));
             }
-            elseif ($opt['type'] == 'variable') {
-
-            }
-            elseif ($opt['type'] == 'condition') {
-                
+            else {
+                $this->opts[] = $d;
             }
         }
     }
 
     public function evaluate() {
+        foreach ($this->opts as $key => $value) {
+            if (!is_string($value)) {
+                $this->opts[$key] = $value->evaluate();
+            }
+        }
 
+        if ($this->meta['N'] == 'N') {
+            $this->meta['N'] = count($this->opts);
+        }
+
+        shuffle($this->opts);
+
+        return join($this->meta['C'], array_slice($this->opts, 0, $this->meta['N']));
+    }
+
+    private function split_opts($text) {
+        if (!$this->delimiter) {
+            if (strpos($text, '~') !== false) {
+                $this->delimiter = '~';
+
+                if (empty($this->meta)) {
+                    $this->meta = [
+                        'N' => 'N',
+                        'C' => ','
+                    ];
+                }
+            }
+            else {
+                $this->delimiter = '|';
+
+                if (empty($this->meta)) {
+                    $this->meta = [
+                        'N' => 1,
+                        'C' => ','
+                    ];
+                }
+            }
+        }
+
+        return explode($this->delimiter, $text);
     }
 }

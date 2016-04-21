@@ -11,9 +11,4 @@ namespace Quas\Expr;
 
 abstract class Expression implements IExpression
 {
-    protected $data;
-
-    public function setData($data) {
-        $this->data = $data;
-    }
 }

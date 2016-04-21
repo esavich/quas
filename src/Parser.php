@@ -21,10 +21,16 @@ class Parser
         $this->root = [];
     }
 
+    public function getRoot() {
+        return $this->root;
+    }
+
     public function parse($template) {
+        $template = preg_replace('/(.*)([^\\\])(\}\s)(.*)/', '$1$2 }$4', $template);
+
         $this->parse_partial($template, $this->root, 0, strlen($template));
 
-        var_dump($this->root);
+//        var_dump($this->root);
     }
 
     private function parse_partial($template, &$node, $start, $end) {

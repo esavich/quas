@@ -11,30 +11,56 @@ namespace Quas\Expr;
 
 class Variable extends Expression
 {
-    public static $VAR_LIST = [];
+    static public $VAR_LIST = [];
 
-    protected $name;
+    private $name = [];
+    private $neg = false;
+    private $fetched = false;
 
-    protected $negative = false;
+    public function __construct($data) {
+        $this->name = $data;
+    }
 
-    public function setData($data) {
-        $this->name = $data[0]['data'];
+    public function prefetch() {
+        if (!$this->fetched) {
+            $tmp = [];
+            foreach ($this->name as $n) {
+                if (is_string($n)) {
+                    $tmp[] = $n;
+                } else {
+                    $tmp[] = $n->evaluate();
+                }
+            }
 
-        if ($this->name[0] == '!') {
-            $this->name = substr($this->name, 1);
-            $this->negative = true;
+            $this->name = join('', $tmp);
+
+            if ($this->name[0] == '!') {
+                $this->neg = true;
+                $this->name = substr($this->name, 1);
+            }
+
+            $this->fetched = true;
         }
     }
 
-    public function evaluate() {
-        return static::$VAR_LIST[$this->name];
-    }
-
-    public function exists() {
-        return isset(static::$VAR_LIST[$this->name]);
+    public function is_neg() {
+        return $this->neg;
     }
 
     public function is_set() {
-        return $this->negative ? !isset(static::$VAR_LIST[$this->name]) : isset(static::$VAR_LIST[$this->name]);
+        $this->prefetch();
+        $exists = array_key_exists($this->name, static::$VAR_LIST);
+
+        return $this->neg ? !$exists : $exists;
+    }
+
+    public function exists() {
+        $this->prefetch();
+        return isset(static::$VAR_LIST[$this->name]);
+    }
+
+    public function evaluate() {
+        $this->prefetch();
+        return static::$VAR_LIST[$this->name];
     }
 }

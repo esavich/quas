@@ -11,32 +11,39 @@ namespace Quas\Expr;
 
 class Condition extends Expression
 {
-    protected $text = '';
-    protected $vars = [];
+    private $text = [];
+    private $vars = [];
 
-    public function setData($data) {
-        foreach ($data as $part) {
-            if ($part['type'] == 'text' && $part['data'] != '' && $part['data'] != ' ') {
-                $this->text .= $part['data'];
+    public function __construct($data) {
+        foreach ($data as $d) {
+            if (is_string($d)) {
+                $this->text[] = $d;
             }
-            elseif ($part['type'] == 'variable') {
-                $var = new Variable();
-                $var->setData($part['data']);
-
-                $this->vars[] = $var;
-
-                $this->text .= $var->exists() ? $var->evaluate() : '';
+            else {
+                $this->vars[] = count($this->text);
+                $this->text[] = $d;
             }
         }
     }
 
     public function evaluate() {
         foreach ($this->vars as $var) {
-            if (!$var->is_set()) {
+            if (!$this->text[$var]->is_set()) {
                 return '';
             }
         }
 
-        return $this->text;
+        foreach ($this->text as $key => $value) {
+            if (!is_string($value)) {
+                if (!$value->is_neg()) {
+                    $this->text[$key] = $value->evaluate();
+                }
+                else {
+                    $this->text[$key] = '';
+                }
+            }
+        }
+
+        return str_replace('  ', ' ', join('', $this->text));
     }
 }
