@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lobster
- * Date: 4/21/16
- * Time: 2:32 PM
- */
-
 namespace Quas;
 
-
+/**
+ * Class Engine
+ * @package Quas
+ */
 class Engine
 {
     private $vars;
@@ -17,6 +13,13 @@ class Engine
 
     }
 
+    /**
+     * Process parsed tree
+     *
+     * @param array $root Tree root
+     * @param array $vars List of source variables
+     * @return string
+     */
     public function process($root, $vars) {
         Expr\Variable::$VAR_LIST = $vars;
 
@@ -38,6 +41,12 @@ class Engine
         return $text;
     }
 
+    /**
+     * Converts string representation of syntax to actual objects
+     *
+     * @param array $root Tree root
+     * @return array
+     */
     private function prepare($root) {
         foreach ($root as $key => $node) {
             if (is_array($node['data'])) {

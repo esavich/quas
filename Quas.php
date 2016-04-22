@@ -64,6 +64,8 @@ class Quas
      * @return bool
      */
     public function valid($template) {
+        $validator = new \Quas\Validator();
 
+        return $validator->valid($template);
     }
 }

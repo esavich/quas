@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lobster
- * Date: 4/20/16
- * Time: 2:51 PM
- */
-
 namespace Quas\Expr;
 
-
+/**
+ * Class Condition
+ * @package Quas\Expr
+ */
 class Condition extends Expression
 {
     private $text = [];
@@ -26,6 +22,11 @@ class Condition extends Expression
         }
     }
 
+    /**
+     * Evaluate conditional expression
+     *
+     * @return string
+     */
     public function evaluate() {
         foreach ($this->vars as $var) {
             if (!$this->text[$var]->is_set()) {
@@ -44,6 +45,6 @@ class Condition extends Expression
             }
         }
 
-        return str_replace('  ', ' ', join('', $this->text));
+        return preg_replace('/\s{2,}/', ' ', join('', $this->text));
     }
 }

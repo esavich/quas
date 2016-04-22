@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lobster
- * Date: 4/20/16
- * Time: 2:51 PM
- */
-
 namespace Quas\Expr;
 
-
+/**
+ * Class Pick
+ * @package Quas\Expr
+ */
 class Pick extends Expression
 {
     private $opts = [];
@@ -38,6 +34,11 @@ class Pick extends Expression
         }
     }
 
+    /**
+     * Evaluate expression
+     *
+     * @return string
+     */
     public function evaluate() {
         foreach ($this->opts as $key => $value) {
             if (!is_string($value)) {
@@ -54,6 +55,12 @@ class Pick extends Expression
         return join($this->meta['C'], array_slice($this->opts, 0, $this->meta['N']));
     }
 
+    /**
+     * Split options from string using delimiter
+     *
+     * @param $text
+     * @return array
+     */
     private function split_opts($text) {
         if (!$this->delimiter) {
             if (strpos($text, '~') !== false) {

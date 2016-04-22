@@ -8,31 +8,63 @@
 
 namespace Quas;
 
-
+/**
+ * Class Parser
+ * @package Quas
+ */
 class Parser
 {
     private $root;
 
+    /**
+     * @var array List of open tags
+     */
     private $opens = ['[', '<', '{'];
+
+    /**
+     * @var array List of close tags
+     */
     private $closes = [']', '>', '}'];
+
+    /**
+     * @var array List types relative to tags
+     */
     private $types = ['pick', 'variable', 'condition'];
 
     public function __construct() {
         $this->root = [];
     }
 
+    /**
+     * @getter $root
+     *
+     * @return array
+     */
     public function getRoot() {
         return $this->root;
     }
 
+    /**
+     * Parse supplied template to tree
+     *
+     * @param $template
+     */
     public function parse($template) {
+        // Replace all spaces after } to space before }. Necessary for preventing double space in compiled string
         $template = preg_replace('/(.*)([^\\\])(\}\s)(.*)/', '$1$2 }$4', $template);
 
         $this->parse_partial($template, $this->root, 0, strlen($template));
-
-//        var_dump($this->root);
     }
 
+    /**
+     * Perform expression-by-expression parsing
+     *
+     * @param string $template Supplied template
+     * @param array $node Current tree node
+     * @param int $start Start index
+     * @param int $end End index
+     * @return bool|int
+     */
     private function parse_partial($template, &$node, $start, $end) {
         $cc = 0;
         for ($i = $start; $i < $end; $i++) {

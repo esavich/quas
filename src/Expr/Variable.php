@@ -1,14 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lobster
- * Date: 4/20/16
- * Time: 2:51 PM
- */
-
 namespace Quas\Expr;
 
+/**
+ * Class UndefinedVariable
+ * @package Quas\Expr
+ */
+class UndefinedVariable extends \Exception {}
 
+/**
+ * Class Variable
+ * @package Quas\Expr
+ */
 class Variable extends Expression
 {
     static public $VAR_LIST = [];
@@ -21,6 +23,9 @@ class Variable extends Expression
         $this->name = $data;
     }
 
+    /**
+     * Precompile nested variable to get final name
+     */
     public function prefetch() {
         if (!$this->fetched) {
             $tmp = [];
@@ -43,10 +48,20 @@ class Variable extends Expression
         }
     }
 
+    /**
+     * Return true if this is negative expression
+     *
+     * @return bool
+     */
     public function is_neg() {
         return $this->neg;
     }
 
+    /**
+     * Checks if variable match condition
+     *
+     * @return bool
+     */
     public function is_set() {
         $this->prefetch();
         $exists = array_key_exists($this->name, static::$VAR_LIST);
@@ -54,13 +69,29 @@ class Variable extends Expression
         return $this->neg ? !$exists : $exists;
     }
 
+    /**
+     * Checks if variable exists in source list
+     *
+     * @return bool
+     */
     public function exists() {
         $this->prefetch();
         return isset(static::$VAR_LIST[$this->name]);
     }
 
+    /**
+     * Evaluate variable expression
+     *
+     * @return mixed
+     * @throws UndefinedVariable
+     */
     public function evaluate() {
         $this->prefetch();
+
+        if (!isset(static::$VAR_LIST[$this->name])) {
+            throw new UndefinedVariable($this->name);
+        }
+
         return static::$VAR_LIST[$this->name];
     }
 }

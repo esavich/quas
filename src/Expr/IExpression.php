@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lobster
- * Date: 4/20/16
- * Time: 3:01 PM
- */
-
 namespace Quas\Expr;
 
-
+/**
+ * Interface IExpression
+ * @package Quas\Expr
+ */
 interface IExpression
 {
     /**
