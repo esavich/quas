@@ -25,7 +25,8 @@ class Pick extends Expression
                 }
 
                 $this->opts = array_merge($this->opts, array_filter($this->split_opts($d), function($x) {
-                    return !empty(trim($x));
+                    $tmp = trim($x);
+                    return !empty($tmp);
                 }));
             }
             else {
