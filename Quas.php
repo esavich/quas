@@ -49,7 +49,7 @@ class Quas
      * @param array $vars List of variables to be placed
      * @return string|bool
      */
-    public function compile($template, $vars) {
+    public function compile($template, $vars = []) {
         $this->parser->parse($template);
 
         $result = $this->engine->process($this->parser->getRoot(), $vars);

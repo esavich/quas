@@ -1,4 +1,7 @@
 # quas
+
+[![Build Status](https://travis-ci.org/weeoi/quas.svg?branch=master)](https://travis-ci.org/weeoi/quas)
+
 PHP Text Template Engine
 
 # Overview
@@ -26,7 +29,13 @@ Also vars could be nested, like `<var<var1<var2>>>`. They will be interpolated f
 In current example if we have var123='test', var1=12, and var2=3, it will return 'test'.
 
 # Tests
-*[WIP]*
+> Require [phpunit](https://phpunit.de) to run.
+
+Run tests with
+
+```sh
+$ phpunit tests
+```
 
 # Contributing
 *[WIP]*
