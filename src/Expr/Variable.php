@@ -54,6 +54,7 @@ class Variable extends Expression
      * @return bool
      */
     public function is_neg() {
+        $this->prefetch();
         return $this->neg;
     }
 
