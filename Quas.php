@@ -35,7 +35,7 @@ class Quas
 
         array_splice($pieces, 0, 1, ['src']);
 
-        $path = join(DIRECTORY_SEPARATOR, $pieces);
+        $path = __DIR__ . DIRECTORY_SEPARATOR . join(DIRECTORY_SEPARATOR, $pieces);
 
         if (file_exists($path)) {
             include $path;
