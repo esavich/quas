@@ -12,11 +12,11 @@ class Condition extends Expression
 
     public function __construct($data) {
         foreach ($data as $d) {
-            if (is_string($d)) {
+            if ($d instanceof Variable) {
+                $this->vars[] = count($this->text);
                 $this->text[] = $d;
             }
             else {
-                $this->vars[] = count($this->text);
                 $this->text[] = $d;
             }
         }
@@ -36,11 +36,15 @@ class Condition extends Expression
 
         foreach ($this->text as $key => $value) {
             if (!is_string($value)) {
-                if (!$value->is_neg()) {
-                    $this->text[$key] = $value->evaluate();
+                if ($value instanceof Variable) {
+                    if (!$value->is_neg()) {
+                        $this->text[$key] = $value->evaluate();
+                    } else {
+                        $this->text[$key] = '';
+                    }
                 }
                 else {
-                    $this->text[$key] = '';
+                    $this->text[$key] = $value->evaluate();
                 }
             }
         }

@@ -47,6 +47,10 @@ class Pick extends Expression
             }
         }
 
+        $this->opts = array_filter($this->opts, function($x) {
+            return trim($x) != '';
+        });
+
         if ($this->meta['N'] == 'N') {
             $this->meta['N'] = count($this->opts);
         }
@@ -74,7 +78,7 @@ class Pick extends Expression
                     ];
                 }
             }
-            else {
+            elseif (strpos($text, '|') !== false) {
                 $this->delimiter = '|';
 
                 if (empty($this->meta)) {
@@ -86,6 +90,6 @@ class Pick extends Expression
             }
         }
 
-        return explode($this->delimiter, $text);
+        return $this->delimiter ? explode($this->delimiter, $text) : [$text];
     }
 }

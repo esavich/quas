@@ -128,4 +128,34 @@ class CompileTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($res, 'test 1');
     }
+
+    public function testConditionalPick() {
+        srand(1);
+
+        $tpl = '{test <var1> [1|2|3]}';
+
+        $vars  = [
+            'var1' => 'test'
+        ];
+
+        $res = $this->q->compile($tpl, $vars);
+
+        $this->assertEquals($res, 'test test 2');
+    }
+
+    public function testPickConditions() {
+        srand(1);
+
+        $tpl = '[{ <var1>}~{ <var2>}~{ <var3>}]';
+
+        $vars = [
+            'var1' => 'test1',
+            'var2' => 'test2',
+            'var3' => 'test3'
+        ];
+
+        $res = trim($this->q->compile($tpl, $vars));
+
+        $this->assertEquals($res, 'test2, test1, test3');
+    }
 }
