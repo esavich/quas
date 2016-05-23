@@ -172,11 +172,6 @@ class CompileTest extends PHPUnit_Framework_TestCase
     public function testEmptyPickCondition() {
         srand(1);
 
-        $ans = ['test1', 'test2', 'test3'];
-        shuffle($ans);
-
-        srand(1);
-
         $tpl = '[{ <var1>}|{ <var2>}|{ <var3>}]';
 
         $vars = [
@@ -186,6 +181,6 @@ class CompileTest extends PHPUnit_Framework_TestCase
 
         $res = trim($this->q->compile($tpl, $vars));
 
-        $this->assertTrue($res != $ans[0]);
+        $this->assertTrue($res == 'test1' || $res == 'test3');
     }
 }
