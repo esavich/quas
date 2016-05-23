@@ -50,6 +50,8 @@ class Parser
      * @param $template
      */
     public function parse($template) {
+        $this->root = [];
+
         // Replace all spaces after } to space before }. Necessary for preventing double space in compiled string
         $template = preg_replace('/(.*)([^\\\])(\}\s)(.*)/', '$1$2 }$4', $template);
 
