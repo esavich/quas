@@ -158,4 +158,20 @@ class CompileTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($res, 'test2, test1, test3');
     }
+
+    public function testEmptyPickCondition() {
+        // With srand(1) var2 should be selected by default, but it's omitted because empty
+        srand(1);
+
+        $tpl = '[{ <var1>}|{ <var2>}|{ <var3>}]';
+
+        $vars = [
+            'var1' => 'test1',
+            'var3' => 'test3'
+        ];
+
+        $res = trim($this->q->compile($tpl, $vars));
+
+        $this->assertEquals($res, 'test1');
+    }
 }
