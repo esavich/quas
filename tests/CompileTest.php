@@ -186,6 +186,6 @@ class CompileTest extends PHPUnit_Framework_TestCase
 
         $res = trim($this->q->compile($tpl, $vars));
 
-        $this->assertNotEquals($res, $ans[0]);
+        $this->assertTrue($res != $ans[0]);
     }
 }
