@@ -132,6 +132,11 @@ class CompileTest extends PHPUnit_Framework_TestCase
     public function testConditionalPick() {
         srand(1);
 
+        $ans = ['1', '2', '3'];
+        shuffle($ans);
+
+        srand(1);
+
         $tpl = '{test <var1> [1|2|3]}';
 
         $vars  = [
@@ -140,10 +145,15 @@ class CompileTest extends PHPUnit_Framework_TestCase
 
         $res = $this->q->compile($tpl, $vars);
 
-        $this->assertEquals($res, 'test test 2');
+        $this->assertEquals($res, 'test test '.$ans[0]);
     }
 
     public function testPickConditions() {
+        srand(1);
+
+        $ans = ['test1', 'test2', 'test3'];
+        shuffle($ans);
+
         srand(1);
 
         $tpl = '[{ <var1>}~{ <var2>}~{ <var3>}]';
@@ -156,11 +166,15 @@ class CompileTest extends PHPUnit_Framework_TestCase
 
         $res = trim($this->q->compile($tpl, $vars));
 
-        $this->assertEquals($res, 'test2, test1, test3');
+        $this->assertEquals($res, join(', ', $ans));
     }
 
     public function testEmptyPickCondition() {
-        // With srand(1) var2 should be selected by default, but it's omitted because empty
+        srand(1);
+
+        $ans = ['test1', 'test2', 'test3'];
+        shuffle($ans);
+
         srand(1);
 
         $tpl = '[{ <var1>}|{ <var2>}|{ <var3>}]';
@@ -172,6 +186,6 @@ class CompileTest extends PHPUnit_Framework_TestCase
 
         $res = trim($this->q->compile($tpl, $vars));
 
-        $this->assertEquals($res, 'test1');
+        $this->assertNotEquals($res, $ans[0]);
     }
 }
