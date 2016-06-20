@@ -10,8 +10,10 @@ class Condition extends Expression
     private $text = [];
     private $vars = [];
 
-    public function __construct($data) {
-        foreach ($data as $d) {
+    public function __construct($src) {
+        parent::__construct($src);
+
+        foreach ($this->data as $d) {
             if ($d instanceof Variable) {
                 $this->vars[] = count($this->text);
                 $this->text[] = $d;
@@ -49,6 +51,6 @@ class Condition extends Expression
             }
         }
 
-        return preg_replace('/\s{2,}/', ' ', join('', $this->text));
+        return $this->modify_result(preg_replace('/\s{2,}/', ' ', join('', $this->text)));
     }
 }

@@ -4,6 +4,19 @@
 
 PHP Text Template Engine
 
+# Example
+```php
+$template = 'Lorem [ipsum~dolor~sit] {amet <var1>}, {consectetur <!var2>} adipisicing elit. Adipisci beatae dolores [eum|eveniet|fugiat hic|ipsum iste(3@;)]';
+
+$data = [
+    'var1' => 'test'
+];
+
+$q = new \Quas();
+
+$text = $q->compile($template, $data);
+```
+
 # Overview
 Generate text from template. Commonly used in SEO optimizations.
 
@@ -20,13 +33,26 @@ Negative numbers can be used. In that case LEN - N variants will be used (where 
 
 `<var>` - Variable. Simply replaced with supplied value.
 
-`{text \<var>}` - Print text only if variable set and not empty.
+`{text <var>}` - Print text only if variable set and not empty.
 
-`{text !\<var>}` - Print text only if variable not set or empty.
+`{text <!var>}` - Print text only if variable not set or empty.
+
+`{text <=var (value)>}` - Print text only if variable equal to value.
+
+`{text <!=var (value)>}` - Print text only if variable not equal to value.
 
 Multiple vars can be set in same rule; in that case they use and(&) relations.
-Also vars could be nested, like `<var<var1<var2>>>`. They will be interpolated from deepest to closest and set as final variable name.
-In current example if we have var123='test', var1=12, and var2=3, it will return 'test'.
+
+# Modifiers
+Modifiers could be applied BEFORE any expression and will affect on result of this expression (including all nested values).
+
+Possible modifiers:
+
+|     |                              |
+|-----|------------------------------|
+| `@` | Do not print result of expression |
+| `^` | Convert first letter of evaluated expression to upper case | 
+| `*` | Convert first letter of evaluated expression to lower case |
 
 # Tests
 > Require [phpunit](https://phpunit.de) to run.
@@ -40,5 +66,5 @@ $ phpunit tests
 # Contributing
 *[WIP]*
 
-#License
+# License
 Distributed under MIT license. See [LICENSE](LICENSE) for reference.

@@ -58,15 +58,15 @@ class Engine
             }
 
             if ($node['type'] == 'variable') {
-                $root[$key] = new Expr\Variable($node['data']);
+                $root[$key] = new Expr\Variable($node);
             }
 
             if ($node['type'] == 'condition') {
-                $root[$key] = new Expr\Condition($node['data']);
+                $root[$key] = new Expr\Condition($node);
             }
 
             if ($node['type'] == 'pick') {
-                $root[$key] = new Expr\Pick($node['data']);
+                $root[$key] = new Expr\Pick($node);
             }
         }
 

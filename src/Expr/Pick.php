@@ -11,8 +11,10 @@ class Pick extends Expression
     private $meta = [];
     private $delimiter = null;
 
-    public function __construct($data) {
-        foreach ($data as $d) {
+    public function __construct($src) {
+        parent::__construct($src);
+
+        foreach ($this->data as $d) {
             if (is_string($d)) {
                 // regex for matching (N@C)
                 if (preg_match('/[^\\\]?\((\d+)@(.*)[^\\\]?\)/', $d, $matches) > 0) {
@@ -57,7 +59,7 @@ class Pick extends Expression
 
         shuffle($this->opts);
 
-        return join($this->meta['C'], array_slice($this->opts, 0, $this->meta['N']));
+        return $this->modify_result(join($this->meta['C'], array_slice($this->opts, 0, $this->meta['N'])));
     }
 
     /**

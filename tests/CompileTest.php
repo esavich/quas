@@ -183,4 +183,64 @@ class CompileTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($res == 'test1' || $res == 'test3');
     }
+
+    public function testVariableEquals() {
+        $tpl = '{test <=var1 (123)>}';
+
+        $vars = [
+            'var1' => '123'
+        ];
+
+        $res = trim($this->q->compile($tpl, $vars));
+
+        $this->assertEquals($res, 'test 123');
+    }
+
+    public function testVariableNotEquals() {
+        $tpl = '{test <!=var1 (123)>}';
+
+        $vars = [
+            'var1' => '321'
+        ];
+
+        $res = trim($this->q->compile($tpl, $vars));
+
+        $this->assertEquals($res, 'test 321');
+    }
+
+    public function testModifyUppercase() {
+        $tpl = '^{test <var1>}';
+
+        $vars = [
+            'var1' => '123'
+        ];
+
+        $res = trim($this->q->compile($tpl, $vars));
+
+        $this->assertEquals($res, 'Test 123');
+    }
+
+    public function testModifyLowercase() {
+        $tpl = '*{Test <var1>}';
+
+        $vars = [
+            'var1' => '123'
+        ];
+
+        $res = trim($this->q->compile($tpl, $vars));
+
+        $this->assertEquals($res, 'test 123');
+    }
+
+    public function testModifyHide() {
+        $tpl = '{test @<var1>}';
+
+        $vars = [
+            'var1' => '123'
+        ];
+
+        $res = trim($this->q->compile($tpl, $vars));
+
+        $this->assertEquals($res, 'test');
+    }
 }

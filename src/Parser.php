@@ -31,6 +31,11 @@ class Parser
      */
     private $types = ['pick', 'variable', 'condition'];
 
+    /**
+     * @var array List of available modifiers
+     */
+    private $modifiers = ['@', '^', '*'];
+
     public function __construct() {
         $this->root = [];
     }
@@ -69,6 +74,8 @@ class Parser
      */
     private function parse_partial($template, &$node, $start, $end) {
         $cc = 0;
+        $applied_modifiers = [];
+        
         for ($i = $start; $i < $end; $i++) {
             if (!isset($node[$cc])) {
                 $node[$cc] = [
@@ -84,6 +91,9 @@ class Parser
 
                 $node[$cc]['data'] .= $template[$i];
             }
+            elseif (in_array($template[$i], $this->modifiers)) {
+                $applied_modifiers[] = $template[$i];
+            }
             elseif (in_array($template[$i], $this->opens)) {
                 $tag_index = -1;
 
@@ -98,6 +108,11 @@ class Parser
                     'type' => $this->types[$tag_index],
                     'data' => []
                 ];
+                
+                if (!empty($applied_modifiers)) {
+                    $node[$cc]['modifiers'] = $applied_modifiers;
+                    $applied_modifiers = [];
+                }
 
                 $i = $this->parse_partial($template, $node[$cc]['data'], $i+1, $end);
 

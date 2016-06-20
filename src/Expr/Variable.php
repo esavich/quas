@@ -17,10 +17,14 @@ class Variable extends Expression
 
     private $name = [];
     private $neg = false;
+    private $comp = false;
+    private $comp_to = '';
     private $fetched = false;
 
-    public function __construct($data) {
-        $this->name = $data;
+    public function __construct($src) {
+        parent::__construct($src);
+
+        $this->name = $this->data;
     }
 
     /**
@@ -44,6 +48,16 @@ class Variable extends Expression
                 $this->name = substr($this->name, 1);
             }
 
+            if ($this->name[0] == '=') {
+                $this->comp = true;
+
+                $openb = strpos($this->name, '(') + 1;
+                $closeb = strrpos($this->name, ')');
+
+                $this->comp_to = trim(substr($this->name, $openb, $closeb - $openb));
+                $this->name = trim(substr($this->name, 1, $openb - 2));
+            }
+
             $this->fetched = true;
         }
     }
@@ -55,7 +69,7 @@ class Variable extends Expression
      */
     public function is_neg() {
         $this->prefetch();
-        return $this->neg;
+        return !$this->comp && $this->neg;
     }
 
     /**
@@ -66,8 +80,19 @@ class Variable extends Expression
     public function is_set() {
         $this->prefetch();
         $exists = array_key_exists($this->name, static::$VAR_LIST);
+        $ok = false;
 
-        return $this->neg ? !$exists : $exists;
+        if (!$this->comp) {
+            $ok = $this->neg ? !$exists : $exists;
+        }
+
+        if ($this->comp && $exists) {
+            $ok = $this->neg ?
+                $this->comp_to != static::$VAR_LIST[$this->name] :
+                $this->comp_to == static::$VAR_LIST[$this->name];
+        }
+
+        return $ok;
     }
 
     /**
@@ -93,6 +118,6 @@ class Variable extends Expression
             throw new UndefinedVariable($this->name);
         }
 
-        return static::$VAR_LIST[$this->name];
+        return $this->modify_result(static::$VAR_LIST[$this->name]);
     }
 }
