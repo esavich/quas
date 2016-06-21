@@ -91,7 +91,7 @@ class Parser
 
                 $node[$cc]['data'] .= $template[$i];
             }
-            elseif (in_array($template[$i], $this->modifiers)) {
+            elseif (in_array($template[$i], $this->modifiers) && ($i+1 < $end) && in_array($template[$i+1], $this->opens)) {
                 $applied_modifiers[] = $template[$i];
             }
             elseif (in_array($template[$i], $this->opens)) {
