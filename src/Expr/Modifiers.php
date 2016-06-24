@@ -8,6 +8,8 @@ trait Modifiers
 
     public function modify_result($data = '')
     {
+        $this->modifiers = array_reverse($this->modifiers);
+
         foreach ($this->modifiers as $mod) {
             if ($mod == '@') {
                 $data = '';

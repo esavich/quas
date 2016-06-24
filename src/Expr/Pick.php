@@ -14,6 +14,8 @@ class Pick extends Expression
     public function __construct($src) {
         parent::__construct($src);
 
+        $nodes = [];
+
         foreach ($this->data as $d) {
             if (is_string($d)) {
                 // regex for matching (N@C)
@@ -26,15 +28,26 @@ class Pick extends Expression
                     ];
                 }
 
-                $this->opts = array_merge($this->opts, array_filter($this->split_opts($d), function($x) {
+                $tmp = array_filter($this->split_opts($d), function($x) {
                     $tmp = trim($x);
                     return !empty($tmp);
-                }));
+                });
+
+                $nodes[] = $tmp[0];
+
+                if (count($tmp) > 1) {
+                    $this->opts[] = $nodes;
+                    $this->opts = array_merge($this->opts, array_splice($tmp, 1, -1));
+
+                    $nodes = [end($tmp)];
+                }
             }
             else {
-                $this->opts[] = $d;
+                $nodes[] = $d;
             }
         }
+
+        $this->opts[] = $nodes;
     }
 
     /**
@@ -44,8 +57,14 @@ class Pick extends Expression
      */
     public function evaluate() {
         foreach ($this->opts as $key => $value) {
-            if (!is_string($value)) {
-                $this->opts[$key] = $value->evaluate();
+            if (is_array($value)) {
+                foreach ($value as $k => $v) {
+                    if (!is_string($v)) {
+                        $value[$k] = $v->evaluate();
+                    }
+                }
+
+                $this->opts[$key] = join('', $value);
             }
         }
 
