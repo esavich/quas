@@ -12,9 +12,9 @@ trait Modifiers
             if ($mod == '@') {
                 $data = '';
             } elseif ($mod == '^') {
-                $data = ucfirst($data);
+                $data = mb_strtoupper(mb_substr($data, 0, 1)) . mb_substr($data, 1);
             } elseif ($mod == '*') {
-                $data = lcfirst($data);
+                $data = mb_strtolower(mb_substr($data, 0, 1)) . mb_substr($data, 1);
             }
         }
 
