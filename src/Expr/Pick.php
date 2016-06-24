@@ -29,7 +29,8 @@ class Pick extends Expression
                 }
 
                 $tmp = array_filter($this->split_opts($d), function($x) {
-                    return !empty(trim($x));
+                    $tmp = trim($x);
+                    return !empty($tmp);
                 });
 
                 if (count($tmp) > 1) {
