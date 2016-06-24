@@ -28,14 +28,13 @@ class Pick extends Expression
                     ];
                 }
 
-                $tmp = array_filter($this->split_opts($d), function($x) {
-                    $tmp = trim($x);
-                    return !empty($tmp);
-                });
+                $tmp = array_values($this->split_opts($d));
+
+                if (count($tmp) >= 1) {
+                    $nodes[] = $tmp[0];
+                }
 
                 if (count($tmp) > 1) {
-                    $nodes[] = $tmp[0];
-
                     $this->opts[] = $nodes;
                     $this->opts = array_merge($this->opts, array_splice($tmp, 1, -1));
 
