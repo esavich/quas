@@ -28,21 +28,18 @@ class Pick extends Expression
                     ];
                 }
 
-                $tmp = array_values($this->split_opts($d));
+                if (strpos($d, '|') !== false || strpos($d, '~') !== false) {
+                    $tmp = array_values($this->split_opts($d));
 
-                if (count($tmp) >= 1) {
                     $nodes[] = $tmp[0];
-                }
 
-                if (count($tmp) > 1) {
                     $this->opts[] = $nodes;
                     $this->opts = array_merge($this->opts, array_splice($tmp, 1, -1));
 
                     $nodes = [end($tmp)];
                 }
                 else {
-                    $this->opts[] = $nodes;
-                    $nodes = [];
+                    $nodes[] = $d;
                 }
             }
             else {
